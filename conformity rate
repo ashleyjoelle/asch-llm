@@ -1,0 +1,56 @@
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+# Load post-survey data into a DataFrame
+data_post = {
+    "Timestamp": [
+        "4/17/2024 14:28:50", "4/17/2024 17:21:49", "4/17/2024 17:40:26",
+        "4/18/2024 11:33:26", "4/18/2024 12:00:03", "4/18/2024 12:24:52",
+        "4/18/2024 12:52:57", "4/18/2024 13:55:45", "4/18/2024 14:13:59",
+        "4/22/2024 14:06:34", "4/22/2024 16:00:28", "4/22/2024 17:35:22",
+        "4/23/2024 15:42:44", "4/23/2024 18:23:54", "4/23/2024 18:42:39"
+    ],
+    "1 or 2?": [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
+    "Do you still stand by your opinion?": ["Yes", "Yes", "Yes", "Yes", "Yes", "No", "Yes", "Yes", "Yes", "Yes", "Yes", "No", "Yes", "No", "Yes"]
+}
+
+# DataFrame
+df_post = pd.DataFrame(data_post)
+# function to count conformity per group
+def count_conformity(group_num):
+    counts = df_post[df_post["1 or 2?"] == group_num]["Do you still stand by your opinion?"].value_counts()
+    return counts.reindex(["Yes", "No"], fill_value=0)
+
+# count conformity for each group using the function
+group1_conformity = count_conformity(1)
+group2_conformity = count_conformity(2)
+
+# create a contingency table
+conformity_data = [
+    [group1_conformity["Yes"], group1_conformity["No"]],
+    [group2_conformity["Yes"], group2_conformity["No"]]
+]
+
+#  chi-square test
+chi2, p, _, _ = chi2_contingency(conformity_data)
+
+# create a DataFrame with results
+conformity_result = {
+    "Group": ["Group 1 (Without Dissenter)", "Group 2 (With Dissenter)"],
+    "Conforming Trials": [group1_conformity["No"], group2_conformity["No"]],
+    "Total Trials": [group1_conformity.sum(), group2_conformity.sum()],
+    "Conformity Rate (%)": [
+        (group1_conformity["No"] / group1_conformity.sum()) * 100,
+        (group2_conformity["No"] / group2_conformity.sum()) * 100
+    ]
+}
+
+# create conformity result DataFrame
+df_conformity = pd.DataFrame(conformity_result)
+
+# chi-square test results
+chi2_results = f"Chi-Square Test: χ2 = {chi2:.2f}, p-value = {p:.4f}"
+
+# print results
+print(df_conformity)
+print(chi2_results)
