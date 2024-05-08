@@ -1,0 +1,48 @@
+//confidence vs. conformity
+//
+import pandas as pd
+import numpy as np
+from scipy.stats import ttest_ind, pearsonr
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# pre-Study Data (Qualitative Survey)
+data_pre = {
+    "Participant": list(range(1, 16)),
+    "Confidence Level (Pre-Survey)": [7, 7, 7, 5, 5, 5, 6, 6, 4, 6, 5, 5, 6, 6, 7]
+}
+
+# post-Study Data (Qualitative Survey)
+data_post = {
+    "Participant": list(range(1, 16)),
+    "Confidence Level (Post-Survey)": [6, 5, 5, 7, 5, 3, 5, 7, 5, 5, 6, 7, 5, 6, 7],
+    "Conformed": ["Yes", "No", "Yes", "Yes", "No", "No", "Yes", "Yes", "No", "Yes", "Yes", "No", "Yes", "No", "Yes"]
+}
+
+# DataFrames
+df_pre = pd.DataFrame(data_pre)
+df_post = pd.DataFrame(data_post)
+
+# merging pre-Study and post-Study dataFrames using inner join
+df = pd.merge(df_pre, df_post, on="Participant")
+
+# convert conformed column to binary using list comprehension (?)
+df["Conformed Binary"] = [1 if x == "Yes" else 0 for x in df["Conformed"]]
+
+# calculate correlation between confidence and conformity
+confidence_pre = df["Confidence Level (Pre-Survey)"].values
+conformed_binary = df["Conformed Binary"].values
+correlation, p_value = pearsonr(confidence_pre, conformed_binary)
+print(f"Pearson Correlation (Confidence vs. Conformity): r = {correlation:.2f}, p-value = {p_value:.4f}")
+
+# compare mean confidence levels between conforming and non-conforming participants using NumPy indexing
+conforming = confidence_pre[conformed_binary == 1]
+non_conforming = confidence_pre[conformed_binary == 0]
+
+t_stat, t_p_value = ttest_ind(conforming, non_conforming)
+print(f"T-Test (Conforming vs. Non-Conforming): t-stat = {t_stat:.2f}, p-value = {t_p_value:.4f}")
+
+# lot using seaborn for visualization
+sns.boxplot(x="Conformed", y="Confidence Level (Pre-Survey)", data=df)
+plt.title("Confidence Level (Pre-Survey) vs. Conformity")
+plt.show()
