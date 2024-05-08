@@ -1,0 +1,40 @@
+//linear regression, regression analysis / linear regression to predict conformity rates based on experimental variables 
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import statsmodels.api as sm
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# data extracted from the PDFs
+data = {
+    "Participant": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Confidence Level (Pre-Survey)": [7, 7, 7, 5, 5, 5, 6, 6, 4, 6, 5, 5, 6, 6, 7],
+    "Confidence Level (Post-Survey)": [6, 5, 5, 7, 5, 3, 5, 7, 5, 5, 6, 7, 5, 6, 7],
+    "Conformed": ["Yes", "No", "Yes", "Yes", "No", "No", "Yes", "Yes", "No", "Yes", "Yes", "No", "Yes", "No", "Yes"]
+}
+
+# create a single DataFrame
+df = pd.DataFrame(data)
+
+# encode "Conformed" as binary values
+df["Conformed Binary"] = [1 if x == "Yes" else 0 for x in df["Conformed"]]
+
+# define features (experimental variables) and target variable
+X = df[["Confidence Level (Pre-Survey)", "Confidence Level (Post-Survey)"]]
+y = df["Conformed Binary"]
+X = sm.add_constant(X)
+# logistic regression model using statsmodels
+model = sm.Logit(y, X)
+results = model.fit()
+# model summary
+print(results.summary())
+#  probabilities
+df["Predicted Probability"] = results.predict(X)
+#  predicted probability vs. confidence level (pre-survey data)
+sns.scatterplot(x="Confidence Level (Pre-Survey)", y="Predicted Probability", hue="Conformed", data=df)
+plt.title("Predicted Probability of Conforming vs. Confidence Level (Pre-Survey)")
+plt.xlabel("Confidence Level (Pre-Survey)")
+plt.ylabel("Predicted Probability")
+plt.legend(title="Conformed")
+plt.grid(True)
+plt.show()
