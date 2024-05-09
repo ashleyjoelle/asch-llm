@@ -1,0 +1,47 @@
+//linear regression, not sure about this one
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+
+# Pre-Study and Post-Study Data
+data_pre = {
+    "Participant": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Confidence Level (Pre-Survey)": [7, 7, 7, 5, 5, 5, 6, 6, 4, 6, 5, 5, 6, 6, 7]
+}
+
+data_post = {
+    "Participant": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Confidence Level (Post-Survey)": [6, 5, 5, 7, 5, 3, 5, 7, 5, 5, 6, 7, 5, 6, 7],
+    "Conformed": ["Yes", "No", "Yes", "Yes", "No", "No", "Yes", "Yes", "No", "Yes", "Yes", "No", "Yes", "No", "Yes"],
+    "Group": ["Group 1", "Group 2", "Group 1", "Group 2", "Group 1", "Group 2", "Group 1", "Group 2", "Group 1", "Group 2", "Group 1", "Group 2", "Group 1", "Group 2", "Group 1"]
+}
+
+# Create DataFrames
+df_pre = pd.DataFrame(data_pre)
+df_post = pd.DataFrame(data_post)
+
+# Merge Pre- and Post-Study Data
+df_combined = pd.merge(df_pre, df_post, on="Participant")
+
+# Define Features and Target Variable
+X = df_combined["Confidence Level (Pre-Survey)"]
+y = df_combined["Confidence Level (Post-Survey)"]
+
+# Fit Linear Regression Model
+X = sm.add_constant(X)
+model = sm.OLS(y, X)
+results = model.fit()
+
+# Predict using the model
+predictions = results.predict(X)
+
+# Plot actual vs predicted
+plt.figure(figsize=(8, 6))
+plt.scatter(df_combined["Confidence Level (Pre-Survey)"], df_combined["Confidence Level (Post-Survey)"], label='Actual')
+plt.plot(df_combined["Confidence Level (Pre-Survey)"], predictions, color='red', label='Linear Regression')
+plt.xlabel('Confidence Level (Pre-Survey)')
+plt.ylabel('Confidence Level (Post-Survey)')
+plt.title('Linear Regression')
+plt.legend()
+plt.show()
+
