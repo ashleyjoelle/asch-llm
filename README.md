@@ -1,6 +1,6 @@
 # data + methods for human-llm research
 -  (conformity rates for group 1 (2 disagreeing llms), conformity rates for group 2 (1 disagreeing, 1 independent)
-- chi squared test calculation, t-test
+- chi squared test calculation, t-test -> linear regression
 
 Abstract: The intricacies of human-to-human conversations are multifaceted and with the pervasive nature of generative AI, understanding how we interact with each other and how these dynamics contrast with communications involving Large Language Models (LLMs) can inform us about how to design for LLM-based applications. Despite differences in experiences, humans often struggle to discern between human and AI-generated language (Jakesch et al., 2023). This study explores the role of Large Language Models (LLMs) regarding trust and shaping perceptions of happiness within group dynamics. We focus on interactions where individuals confront GPT-4 agents in a structured debate with an objective question. Drawing inspiration from the Asch Conformity Experiment, this research examines the persuasive impact of LLMS when engaging directly with humans in a dialectical format. Central to our inquiry is the question: *How do these argumentative exchanges with an LLM influence an individual's established beliefs about happiness?* This research highlights the nuanced ways in which digital agents are becoming integral to the evolution of interpersonal and professional dynamics.
 
